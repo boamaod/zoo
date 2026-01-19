@@ -1,0 +1,16 @@
+.printx /Processing ROMBIOS/
+bootstr	equ	0ff50h	;Bootstrap start address
+hgr	equ	0ff8ch	;High graphic resolution
+hcolor	equ	0ff8fh	;Color select
+hplot	equ	0ff92h	;Put pixel to screen
+hplotto	equ	0ff95h	;Line to screen
+ttstat	equ	0ffc7h	;Keyboard status
+ttcon	equ	0ffcdh	;Send message to console
+tti	equ	0ffd3h	;Input from keyboard
+ttio	equ	0ffd6h	;Inpurt from keyboard with echo
+tto	equ	0ffd9h	;Output to screen
+crlf	equ	0ffcah	;Output CR+LF
+outh	equ	0ffdch	;Display a byte in hex
+outh2	equ	0ffdfh	;Display a word in hex
+move	equ	0fff4h	
+intrsv	equ	0ff89h

@@ -1,0 +1,1725 @@
+	aseg
+	org	0100h
+if1
+	.printx / ******   ***     ***   /
+	.printx /     *   *   *   *   *  /
+	.printx /    *   *     * *     * /
+	.printx /   *    *     * *     * /
+	.printx /  *      *   *   *   *  /
+	.printx / ******   ***     ***   /
+	.printx /Vakstu Laboratories Ltd./
+	.printx /        1991 (c)        /
+	.printx /                        /
+endif
+	include	ROMBIOS.LIB
+y3407	equ	3407h
+tabstrt	equ	2200h
+demtab	equ	tabstrt+800h
+	jmp	Init
+;
+a0003:	jmp	a0032
+;
+a0006:	jmp	a004d
+;
+	jmp	a006c
+;
+a000c:	jmp	a0081
+;
+a000f:	jmp	a00a6
+;
+a0012:	jmp	a00bc
+;
+a0015:	jmp	a00c8
+;
+a0018:	jmp	a017a
+;
+	jmp	a018c
+;
+a001e:	jmp	a0199
+;
+a0021:	jmp	a01a7
+;
+a0024:	jmp	a01bb
+;
+a0027:	jmp	a01d2
+;
+a002a:	jmp	a0288
+;
+a002d:	jmp	a02be
+	include	PMOOD.ASM
+reznr3:	push	h
+	push	d
+	push	b
+	mvi	a,3
+	call	0ffb9h
+	pop	b
+	pop	d
+	pop	h
+	ret
+;
+reznr1:	push	h
+	push	d
+	push	b
+	mvi	a,1
+	call	0ffb9h
+	pop	b
+	pop	d
+	pop	h
+	ret
+;
+picoff:	in	6
+	ori	80h
+	out	6
+	ret
+;
+picon:	in	6
+	ani	07fh
+	out	6
+	ret
+;
+mode:	mvi	a,1bh
+	call	tto
+	mvi	a,'M'
+	jmp	tto
+;
+mode40:	call	picoff
+	call	mode
+	mvi	a,'0'
+	call	tto
+	jmp	picon
+;
+mode64:	call	picoff
+	call	mode
+	mvi	a,'2'
+	call	tto
+	jmp	picon
+;
+add48:	push	d
+	lxi	d,48
+	dad	d
+	pop	d
+	ret
+;
+d0030:	dw	d0183
+a0032:	push	h
+	push	b
+a0034:	ldax	b
+	mov	m,a
+	inx	h
+	inr	b
+	ldax	b
+	mov	m,a
+	call	add48
+	inx	b
+	ldax	b
+	mov	m,a
+	dcx	h
+	dcr	b
+	ldax	b
+	mov	m,a
+	call	add48
+	inx	b
+	mov	a,c
+	ani	0fh
+	cpi	0ch
+	jnz	a0034
+	pop	b
+	pop	h
+	ret
+;
+;
+a004d:	push	h
+	push	b
+	call	reznr3
+a004f:	ldax	b
+	ora	m
+	mov	m,a
+	inx	h
+	inr	b
+	ldax	b
+	ora	m
+	mov	m,a
+	call	add48
+	inx	b
+	ldax	b
+	ora	m
+	mov	m,a
+	dcx	h
+	dcr	b
+	ldax	b
+	ora	m
+	mov	m,a
+	call	add48
+	inx	b
+	mov	a,c
+	ani	0fh
+	cpi	0ch
+	jnz	a004f
+	call	reznr1
+	pop	b
+	pop	h
+	ret
+;
+a006c:	xchg
+	lxi	h,demtab
+	mvi	b,0c0h
+a0072:	mov	a,m
+	rrc
+	rrc
+	rrc
+	rrc
+	inx	h
+	ora	m
+	stax	d
+	inx	h
+	inx	d
+	dcr	b
+	jnz	a0072
+	ret
+;
+a0081:	lxi	d,demtab
+	lxi	b,0c000h
+a0087:	mov	a,m
+	add	a
+	add	a
+	add	a
+	add	a
+	stax	d
+	cpi	050h
+	jnz	a0093
+	inr	c
+a0093:	inx	d
+	mov	a,m
+	ani	0f0h
+	stax	d
+	cpi	050h
+	jnz	a009e
+	inr	c
+a009e:	inx	d
+	inx	h
+	dcr	b
+	jnz	a0087
+	mov	a,c
+	ret
+;
+a00a6:	lxi	h,0d800h
+	lxi	d,demtab
+	lxi	b,0180h
+a00af:	push	b
+	call	a00c8
+	pop	b
+	inx	d
+	dcx	b
+	mov	a,b
+	ora	c
+	jnz	a00af
+	ret
+;
+a00bc:	mov	a,d
+	sui	high demtab
+	mov	h,a
+	mov	a,e
+	ani	0f0h
+	ora	h
+	rrc
+	rrc
+	rrc
+	rrc
+	add	a
+	mov	h,a
+	mov	a,e
+	ani	0fh
+	push	d
+	push	h
+	mov	e,a
+	mvi	d,0
+	mov	l,e
+	mov	h,d
+	dad	h	;x2
+	dad	d	;x3
+	dad	h	;x6
+	dad	h	;x12
+	dad	h	;2x12
+	dad	h	;4x12
+	dad	h	;8x12
+	dad	h	;16x12
+	mov	e,l
+	mov	d,h
+	dad	h	;32x12
+	dad	d	;48x12
+	lxi	d,0d800h
+	dad	d
+	xchg
+	pop	h
+	mov	l,h
+	mvi	h,0
+	dad	d
+	pop	d
+	ret
+;
+a00c8:	ldax	d
+	mov	c,a
+	mvi	b,high tabstrt
+	call	a00bc
+	jmp	a0032
+;
+a00d2:	push	h
+	call	a00c8
+	lxi	b,0fee0h
+	dad	b
+	pop	psw
+	lxi	b,tabstrt+260h
+	add	b
+	mov	b,a
+	call	a004d
+	xchg
+	lxi	d,0ffffh
+	dad	d
+	ret
+;
+a00e9:	push	h
+	call	a00c8
+	pop	psw
+	lxi	b,tabstrt+200h
+	add	b
+	mov	b,a
+	call	a004d
+	xchg
+	ret
+;
+a00f8:	push	h
+	call	a00c8
+	dcx	h
+	pop	psw
+	lxi	b,tabstrt+220h
+	add	b
+	mov	b,a
+	call	a004d
+	xchg
+	lxi	d,0fff0h
+	dad	d
+	ret
+;
+a010f:	push	h
+	call	a00c8
+	inx	h
+	pop	psw
+	lxi	b,tabstrt+240h
+	add	b
+	mov	b,a
+	call	a004d
+	xchg
+	lxi	d,10h
+	dad	d
+	ret
+;
+a0126:	push	h
+	call	a00c8
+	lxi	b,120h
+	dad	b
+	pop	psw
+	lxi	b,tabstrt+280h
+	add	b
+	mov	b,a
+	call	a004d
+	xchg
+	lxi	d,1
+	dad	d
+	ret
+;
+a013d:	push	h
+	call	a00c8
+	pop	psw
+	lxi	b,tabstrt+2e0h
+	add	b
+	mov	b,a
+	call	a004d
+	xchg
+	ret
+;
+a014c:	push	h
+	call	a00c8
+	dcx	h
+	pop	psw
+	lxi	b,tabstrt+2a0h
+	add	b
+	mov	b,a
+	call	a004d
+	xchg
+	lxi	d,0fff0h
+	dad	d
+	ret
+;
+a0163:	push	h
+	call	a00c8
+	inx	h
+	pop	psw
+	lxi	b,tabstrt+2c0h
+	add	b
+	mov	b,a
+	call	a004d
+	xchg
+	lxi	d,10h
+	dad	d
+	ret
+;
+a017a:	push	h
+	call	a00c8
+	pop	d
+	call	a00c8
+	db	1
+d0183:	dw	1080h
+	mov	a,c
+	adi	010h
+	mov	c,a
+	jmp	a004d
+;
+a018c:	mov	a,l
+	ani	00fh
+	dad	h
+	dad	h
+	dad	h
+	dad	h
+	mov	l,a
+	mov	a,h
+	ani	01fh
+	mov	h,a
+	ret
+;
+a0199:	call	a018c
+	xchg
+	call	a018c
+	mov	a,h
+	sub	d
+	mov	b,a
+	mov	a,l
+	sub	e
+	mov	c,a
+	ret
+;
+a01a7:	push	d
+	mov	d,m
+	inx	h
+	mvi	e,001h
+a01ac:	cmp	m
+	inx	h
+	jz	a01b8
+	inr	e
+	dcr	d
+	jnz	a01ac
+	mvi	e,000h
+a01b8:	mov	a,e
+	pop	d
+	ret
+;
+a01bb:	lxi	b,0
+	ora	a
+	rz
+	push	d
+	dcr	a
+	rar
+	rar
+	cma
+	mov	d,a
+	sbb	a
+	mov	c,a
+	cma
+	mov	b,a
+	mov	a,d
+	ana	b
+	mov	b,a
+	mov	a,d
+	ana	c
+	mov	c,a
+	pop	d
+	ret
+;
+a01d2:	ldax	d
+	cpi	040h
+	mvi	l,0ffh
+	jz	a01f2
+	jm	a01f0
+	inr	e
+	ldax	d
+	dcr	e
+	cpi	040h
+	jc	a01f0
+	mov	a,h
+	sui	004h
+	jm	a0126
+	mvi	h,002h
+	jmp	a0126
+;
+a01f0:	mvi	l,000h
+a01f2:	mov	a,h
+	sui	004h
+	jm	a01fd
+	mvi	h,002h
+	jmp	a023e
+;
+a01fd:	mov	a,b
+	ora	a
+	jz	a022c
+	push	h
+	jp	a0219
+a0206:	lxi	h,0fff0h
+	dad	d
+	mov	a,m
+	pop	h
+	cpi	030h
+	jc	a022c
+	mov	a,l
+	ora	a
+	jp	a00f8
+	jmp	a014c
+;
+a0219:	lxi	h,10h
+	dad	d
+	mov	a,m
+	pop	h
+	cpi	030h
+	jc	a022c
+	mov	a,l
+	ora	a
+	jp	a010f
+	jmp	a0163
+;
+a022c:	mvi	b,000h
+	mov	a,c
+	ora	a
+	jm	a0246
+	jnz	a026f
+a0236:	mov	a,l
+	ora	a
+	jp	a00e9
+	jmp	a013d
+;
+a023e:	mov	a,c
+	ora	a
+	jz	a027a
+	jp	a026f
+a0246:	ldax	d
+	cpi	030h
+	jc	a027a
+	jnz	a025a
+	dcr	e
+	ldax	d
+	inr	e
+	cpi	030h
+	jc	a027a
+	jmp	a00d2
+;
+a025a:	cpi	040h
+	jnz	a027a
+	mov	a,h
+	ora	a
+	jnz	a027a
+	dcr	e
+	ldax	d
+	inr	e
+	cpi	030h
+	jnz	a027a
+	jmp	a00d2
+;
+a026f:	inr	e
+	ldax	d
+	dcr	e
+	cpi	030h
+	jc	a027a
+	jmp	a0126
+;
+a027a:	mvi	c,000h
+	mov	a,b
+	ora	a
+	jz	a0236
+	push	h
+	jm	a0206
+	jmp	a0219
+;
+a0288:	call	a00c8
+	lxi	b,tabstrt+680h
+	call	a004d
+	dcx	h
+	dcx	h
+	lxi	b,tabstrt+6a0h
+	call	a004d
+	lxi	b,tabstrt+6b0h
+	lxi	d,240h
+	dad	d
+	lxi	d,t02a6
+	jmp	a0032
+;
+t02a6:	call	a00c8
+	lxi	b,tabstrt+690h
+	call	a004d
+	lxi	h,0fff0h
+a02b2:	dad	d
+	xchg
+	call	a00c8
+	inr	e
+	mvi	a,070h
+	stax	d
+	jmp	a00c8
+;
+a02be:	call	a00c8
+	lxi	b,tabstrt+6c0h
+	call	a004d
+	inx	h
+	inx	h
+	lxi	b,tabstrt+6e0h
+	call	a004d
+	lxi	b,tabstrt+6f0h
+	lxi	d,240h
+	dad	d
+	lxi	d,t02dc
+	jmp	a0032
+;
+t02dc:	call	a00c8
+	lxi	b,tabstrt+6d0h
+	call	a004d
+	lxi	h,10h
+	jmp	a02b2
+;
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+a0300:	mov	d,c
+	adc	d
+	inr	d
+	mov	c,e
+	sub	l
+	mov	b,e
+	dcr	d
+	db	030h
+	stax	b
+	mov	d,h
+	dcr	d
+	mov	c,e
+	db	018h
+	mov	b,l
+	dcr	d
+	lxi	sp,05648h
+	dcr	d
+	mov	c,e
+	inr	b
+	inx	h
+	dcr	d
+	sta	y3407
+	dcr	d
+	mov	c,h
+	lxi	d,01525h
+	mov	d,d
+	inr	d
+	mvi	m,015h
+	mov	c,h
+	mov	e,c
+	inx	h
+	dcr	d
+	mov	b,l
+	mov	e,c
+	adc	d
+	inr	d
+	mov	c,l
+	adc	c
+	mov	d,h
+	dcr	d
+	db	030h
+	sub	m
+	mov	b,l
+	dcr	d
+	mov	c,l
+	lxi	b,01536h
+	db	020h
+	lxi	b,0148bh
+	mov	c,m
+	inx	b
+	adc	h
+	inr	d
+	db	020h
+d0340:	db	0
+d0341:	db	0
+d0342:	dw	demtab+240h
+d0344:	db	0
+d0345:	db	0
+d0346:	db	10
+d0347:	db	10
+d0348:	db	3
+d0349:	db	3
+d034a:	db	10
+d034b:	db	4
+	db	0
+d034d:	dw	0
+d034f:	db	010h
+d0350:	dw	demtab+1eh
+d0352:	dw	demtab+1eh
+d0354:	dw	demtab+1eh
+d0356:	dw	tabstrt+200h
+	db	2
+d0359:	nop
+d035a:	nop
+d035b:	dw	demtab+10h
+d035d:	dw	demtab+14h
+d035f:	dw	demtab+15h
+d0361:	dw	tabstrt+480h
+d0363:	nop
+d0364:	ldax	b
+	nop
+d0366:	dw	demtab+10h
+d0368:	dw	demtab+14h
+d036a:	dw	demtab+15h
+d036c:	dw	tabstrt+480h
+d036e:	nop
+d036f:	ldax	b
+	nop
+a0371:	push	psw
+	mov	a,c
+	call	tto
+	pop	psw
+	ret
+;
+a0374:	push	b
+	mov	c,l
+	mov	b,h
+	call	outh2
+	pop	b
+	ret
+;
+a0377:	jmp	outh
+;
+a037a:	push	b
+	mov	c,l
+	mov	b,h
+	call	ttcon
+	pop	b
+	ret
+;
+a037d:	jmp	a05b6
+;
+a0380:	jmp	a03ad
+;
+a0383:	jmp	a04a8
+;
+a0386:	jmp	a04fa
+;
+a0389:	jmp	a0685
+;
+a038c:	jmp	a03e2
+;
+a038f:	jmp	a04d7
+;
+a0392:	jmp	a0529
+;
+a0395:	jmp	a0475
+;
+a0398:	jmp	a05cd
+;
+a039b:	jmp	a0604
+;
+a039e:	jmp	a0559
+;
+	jmp	a0640
+;
+	jmp	a065f
+;
+a03a7:	jmp	a054c
+;
+	jmp	a061d
+;
+a03ad:	lhld	d0352
+	xchg
+	mov	l,a
+	ldax	d
+	cpi	030h
+	jnc	a03bc
+	mvi	a,0ffh
+	ora	a
+	ret
+;
+a03bc:	mov	a,l
+	cpi	005h
+	jnc	a03fe
+a03c2:	sta	d0359
+	call	a0024
+	ldax	d
+	cpi	050h
+	cz	a0495
+	mvi	h,000h
+	call	a0027
+	shld	d0354
+	mov	a,c
+	sta	d0356
+	lxi	h,a03e5
+	shld	d03e3
+	xra	a
+	ret
+;
+a03e2:	db	0c3h
+d03e3:	dw	a03e5
+;
+a03e5:	lhld	d0030
+	shld	d03ef
+	lhld	d0356
+	db	22h
+d03ef:	dw	d0183
+	lhld	d0352
+	xchg
+	lhld	d0354
+	shld	d0352
+	jmp	a0018
+;
+a03fe:	mov	b,a
+	lhld	d0340
+	mov	a,l
+	adi	004h
+	ani	0bfh
+	cmp	h
+	jz	a044e
+	mov	a,b
+	sui	005h
+	jnz	a042b
+	lxi	h,0fff0h
+	dad	d
+	mov	a,m
+	cpi	060h
+	jc	a044e
+	inr	l
+	mov	a,m
+	cpi	020h
+	jnz	a044e
+	call	a0454
+	call	a002a
+	call	noise
+	jmp	a0442
+;
+a042b:	lxi	h,10h
+	dad	d
+	mov	a,m
+	cpi	060h
+	jc	a044e
+	inr	l
+	mov	a,m
+	cpi	020h
+	jnz	a044e
+	call	a0454
+	call	a002d
+	call	noise
+a0442:	xchg
+	shld	d03e3
+	lxi	h,0
+	shld	d0359
+	xra	a
+	ret
+;
+a044e:	lda	d035a
+	jmp	a03c2
+;
+a0454:	push	h
+	push	d
+	mvi	m,070h
+	xchg
+	push	d
+	lxi	h,a0300
+	lda	d0340
+	mov	e,a
+	mvi	d,0
+	dad	d
+	pop	d
+	lda	d034b
+	adi	020h
+	daa
+	mov	m,a
+	inx	h
+	mov	m,e
+	inx	h
+	mov	m,d
+	inx	h
+	inx	h
+	lda	d0340
+	adi	4
+	ani	0bfh
+	sta	d0340
+	pop	d
+	pop	h
+	ret
+;
+a0475:	lhld	d0340
+	mov	a,l
+	cmp	h
+	rz
+	push	d
+	mov	l,h
+	mvi	h,0
+	lxi	d,a0300
+	dad	d
+	pop	d
+	lda	d034b
+	cmp	m
+	rnz
+	inx	h
+	mov	e,m
+	inx	h
+	mov	d,m
+	inx	h
+	inx	h
+	lda	d0341
+	adi	4
+	ani	0bfh
+	sta	d0341
+	mvi	a,020h
+	stax	d
+	jmp	a0015
+;
+a0495:	mvi	a,20
+	push    h
+	lxi	h,015h
+	call	a06c9
+	pop	h
+	lda	d034f
+	dcr	a
+	sta	d034f
+	mvi	a,060h
+	stax	d
+	push	b
+	lxi	b,10
+	call	a061d
+	pop	b
+	ret
+;
+a04a8:	lhld	d0352
+	xchg
+	lhld	d035d
+	push	h
+	call	a001e
+	mov	h,b
+	mov	l,c
+	shld	d0364
+	pop	d
+	mov	a,b
+	ora	c
+	rz
+	ldax	d
+	cpi	030h
+	jc	a0598
+	cpi	050h
+	cz	a057c
+	mvi	h,002h
+	call	a0027
+	shld	d035f
+	mov	a,c
+	sta	d0361
+	mvi	a,0ffh
+	ora	a
+	ret
+;
+a04d7:	lhld	d0030
+	shld	d04e1
+	lhld	d0361
+	db	22h
+d04e1:	dw	d0183
+	lhld	d035d
+	lda	d0363
+	ora	a
+	cnz	a0570
+	sta	d0363
+	xchg
+	lhld	d035f
+	shld	d035d
+	jmp	a0018
+;
+a04fa:	lhld	d0352
+	xchg
+	lhld	d0368
+	push	h
+	call	a001e
+	mov	h,b
+	mov	l,c
+	shld	d036f
+	pop	d
+	mov	a,b
+	ora	c
+	rz
+	ldax	d
+	cpi	030h
+	jc	a05a4
+	cpi	050h
+	cz	a058a
+	mvi	h,004h
+	call	a0027
+	shld	d036a
+	mov	a,c
+	sta	d036c
+	mvi	a,0ffh
+	ora	a
+	ret
+;
+a0529:	lhld	d0030
+	shld	d0533
+	lhld	d036c
+	db	22h
+d0533:	dw	d0183
+	lhld	d0368
+	lda	d036e
+	ora	a
+	cnz	a0570
+	sta	d036e
+	xchg
+	lhld	d036a
+	shld	d0368
+	jmp	a0018
+;
+a054c:	cpi	007h
+	rnc
+	sta	d0359
+	cpi	005h
+	rnc
+	sta	d035a
+	ret
+;
+a0559:	ani	001h
+	add	a
+	dcr	a
+	push	h
+	push	d
+	push	b
+	lxi	h,d034a
+	add	m
+	ani	03fh
+	mov	m,a
+	add	a
+	add	a
+	sta	d0688
+	pop	b
+	pop	d
+	pop	h
+	ret
+;
+a0570:	dcr	a
+	rnz
+	mov	a,m
+	cpi	060h
+	mvi	a,001h
+	rnz
+	mvi	m,050h
+	xra	a
+	ret
+;
+a057c:	lda	d0363
+	ora	a
+	rnz
+	mvi	a,020h
+	sta	d0363
+	mvi	a,060h
+	stax	d
+	ret
+;
+a058a:	lda	d036e
+	ora	a
+	rnz
+	mvi	a,020h
+	sta	d036e
+	mvi	a,060h
+	stax	d
+	ret
+;
+a0598:	lhld	d035b
+	shld	d035f
+	shld	d035d
+	jmp	a05ad
+;
+a05a4:	lhld	d0366
+	shld	d036a
+	shld	d0368
+a05ad:	push	b
+	lxi	b,3
+	call	a061d
+	pop	b
+	ret
+;
+a05b6:	lxi	b,tabstrt+200h
+	lxi	d,demtab+0fh
+	dcr	a
+	rz
+	push	psw
+	call	a0012
+	pop	d
+a05c3:	call	a0006
+	inx	h
+	inx	h
+	dcr	d
+	jnz	a05c3
+	ret
+;
+a05cd:	lxi	h,0515h
+	call	a0604
+	lxi	h,t0691
+	call	a037a
+	lhld	d034d
+	call	a0374
+	lxi	h,t0697
+	call	a037a
+	lda	d0345
+	call	a0640
+	lxi	h,t06a2
+	call	a037a
+	lda	d0347
+	call	a0640
+	lxi	h,t06b0
+	call	a037a
+	lda	d034a
+	call	a0640
+	ret
+;
+a0604:	mov	a,l
+	dcr	a
+	rm
+	inr	a
+	cpi	01ah
+	rnc
+	mvi	c,1bh
+	call	a0371
+	mvi	c,'Y'
+	call	a0371
+	mov	a,l
+	adi	20h
+	mov	c,a
+	call	a0371
+	mov	a,h
+	adi	20h
+	mov	c,a
+	jmp	a0371
+;
+a061d:	push	h
+	push	d
+	lhld	d034d
+	mov	a,c
+	add	l
+	daa
+	mov	l,a
+	mov	a,b
+	adc	h
+	daa
+	mov	h,a
+	shld	d034d
+	xchg
+	lxi	h,0c19h
+	call	a0604
+	xchg
+	call	a0374
+	pop	d
+	pop	h
+	ret
+;
+cls:	mvi	c,01bh
+	call	a0371
+	mvi	c,'L'
+	jmp	a0371
+;
+a0640:	mov	l,a
+	mvi	h,000h
+	call	a065f
+	mov	a,e
+	call	a0377
+	ret
+;
+a064b:	call	a0654
+	call	a0654
+	call	a0654
+a0654:	mov	b,d
+	mov	c,e
+a0656:	mov	a,e
+	add	c
+	daa
+	mov	e,a
+	mov	a,d
+	adc	b
+	daa
+	mov	d,a
+	ret
+;
+a065f:	lxi	d,0
+	mov	a,h
+	call	a0667
+	mov	a,l
+a0667:	call	a066a
+a066a:	push	psw
+	call	a064b
+	pop	psw
+	rrc
+	rrc
+	rrc
+	rrc
+	push	psw
+	ani	00fh
+	cpi	00ah
+	jc	a067d
+	adi	006h
+a067d:	mov	c,a
+	mvi	b,000h
+	call	a0656
+	pop	psw
+	ret
+;
+a0685:	push	d
+	db	11h,0ffh
+d0688:	db	2eh
+a0689:	dcx	d
+	mov	a,d
+	ora	e
+	jnz	a0689
+	pop	d
+	ret
+;
+t0691:	db	' Score:',0
+t0697:	db	'     Stage:',0
+t06a2:	db	'     Chances:',0
+t06b0:	db	'     Speed:',0
+	db	0,0
+;
+Init:	lxi	h,strtms
+	call	a037a
+a06c0:	lhld	0006
+	sphl
+	jmp	a0944
+strtms:	db	1bh,'L',1bh,'4',1bh,'0',0
+;
+a06c6:	call	tti
+valid:	cpi	40h
+	rc
+	ani	5fh
+	ret
+;
+a06c9:	push	h
+	push	d
+	push	b
+a06c90:	push	psw
+	mvi	a,55h
+	call	outbyt
+	push	h
+a06c91:	dcx	h
+	mov	a,h
+	ora	l
+	jnz	a06c91
+	pop	h
+	pop	psw
+	dcr	a
+	jnz	a06c90
+	pop	b
+	pop	d
+	pop	h
+	ret
+;
+noise:	push	h
+	push	b
+	push	psw
+	lxi	h,0100h
+noise1:	mov	a,m
+	call	outbyt
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	inr	l
+	jp	noise1
+	pop	psw
+	pop	b
+	pop	h
+	ret
+;
+outbyt:	di
+	mvi	b,8
+	rlc
+	rlc
+	rlc
+	rlc
+ob1:	out	4
+	nop
+	nop
+	nop
+	nop
+	nop
+	rlc
+	dcr	b
+	jnz	ob1
+	ei
+	ret
+
+a06cc:	call	ttstat
+	jnz	valid
+	mvi	a,0ffh
+	ora	a
+	ret
+;
+a06cf:	lxi	h,endms
+	call	a037a
+	jmp	0
+endms:	db	1bh,'M1',1bh,'5',1bh,'1',0
+;
+; klaviatuurivektor: juhtklahvid.
+;
+t06d2:	db	10,'7','9',1ah,'8',' ','I','-',';','Q','R',0,0,0,0
+;
+a06e0:	lxi	h,0
+	shld	d034b
+	shld	d034d
+	lda	d0344
+	sta	d0345
+	lda	d0346
+	sta	d0347
+	ret
+;
+a06f6:	lda	d0348
+	sta	d0349
+	lxi	h,0c000h
+a06f61:	dcx	h
+	mov	a,l
+	ora	h
+	jnz	a06f61
+	mvi	a,6
+a06f60:	push	psw
+	mvi	a,10
+	lxi	h,0f0h
+	call	a06c9
+	mvi	a,10
+	lxi	h,080h
+	call	a06c9
+	pop	psw
+	dcr	a
+	jnz	a06f60
+	lxi	h,0
+	shld	d0340
+	xra	a
+	sta	d0363
+	sta	d036e
+	ret
+;
+a0713:	lxi	h,demtab+180h
+	nop
+	lhld	d0342
+	lda	d0345
+	lxi	d,0c0h
+a0720:	dcr	a
+	jm	a0728
+	dad	d
+	jmp	a0720
+;
+a0728:	ret
+;
+a0729:	call	a000f
+	lda	d0349
+	call	a037d
+	lhld	d0350
+	shld	d0352pÚÉÅâÚ	«ƒ@pÚÅâÚ	«ƒ@	pÚÉÅâÚ	«ƒ@¿pÚÅâ	d0368
+	ret
+;
+a0745:	db	0cdh
+d0746:	dw	a078d
+	lda	d0359
+	call	a0380
+	jnz	a0789
+	call	a0383
+	jz	a0789
+	call	a0386
+	jz	a0789
+	db	0cdh
+d075e:	dw	a078d
+	lhld	d0352
+	xchg
+	call	a038c
+	call	a038f
+	call	a0392
+	call	a0395
+	lhld	d034b
+	mov	a,l
+	adi	001h
+	daa
+	mov	l,a
+	mov	a,h
+	aci	000h
+	daa
+	mov	h,a
+	shld	d034b
+	lda	d034f
+	ora	a
+	jnz	a0745
+	xra	a
+	ret
+;
+a0789:	push	h
+	lxi	h,60h
+a07891: mvi	a,1
+	call	a06c9
+	inx	h
+	mov	a,h
+	cpi	2
+	jc	a07891
+	pop	h
+	mvi	a,0ffh
+	ora	a
+	ret
+;
+a078d:	call	a0389
+	call	a06cc
+	cpi	0ffh
+	rz
+a0796:	lxi	h,t06d2
+	call	a0021
+	cpi	10
+	jz	waste
+	cpi	009h
+	jz	a06c0
+	cpi	007h
+	jc	a03a7
+	sui	007h
+	call	a039e
+	call	a0398
+	call	a06c6
+	cpi	03dh
+	jnz	a07b8
+	mvi	a,02dh
+a07b8:	cpi	02bh
+	jnz	a07bf
+	mvi	a,03bh
+a07bf:	jmp	a0796
+;
+waste:	inx	sp
+	inx	sp
+	jmp	a0789
+;
+a07c2:	call	mode64
+	lxi	h,demtab+240h
+	shld	d0342
+	lxi	h,a0398
+	shld	d07ea
+	lxi	h,a078d
+	shld	d0746
+	shld	d075e
+a07d7:	call	a06e0
+a07da:	call	a06f6
+	call	a0713
+	call	a000c
+	sta	d034f
+a07e6:	call	a0729
+	db	0cdh
+d07ea:	dw	a0398
+	lxi	h,0
+	shld	d0359
+	call	a0745
+	ora	a
+	jz	a0808
+	lxi	h,d0349
+	dcr	m
+	jnz	a07e6
+	lxi	h,d0347
+	dcr	m
+	jnz	a07da
+	ret
+;
+a0808:	lxi	h,d0345
+	mov	a,m
+	inr	a
+	cpi	25
+	jz	onnit
+	mov	m,a
+	jmp	a07da
+;
+onnit:	call	cls
+	lxi	h,2e2ah
+	shld	cursor+2
+	lxi	b,cursor
+	call	ttcon
+	lxi	b,onnmsg
+	call	ttcon
+onnit1:	mvi	a,20
+	lxi	h,0100h
+	call	a06c9
+	mvi	a,20
+	lxi	h,0b0h
+	call	a06c9
+	mvi	a,30
+	lxi	h,040h
+	call	a06c9
+	call	noise
+	call	ttstat
+	jz	onnit1
+	ret
+;
+onnmsg:	db	' Y O U  A R E  T H E  M A S T E R !',0
+;
+a0813:	call	mode64
+	lxi	h,demtab+180h
+	shld	d0342
+	lxi	h,t0887
+	shld	d07ea
+	lxi	h,t0834
+	shld	d0746
+	lxi	h,t0864
+	shld	d075e
+	call	a0858
+	jmp	a07d7
+;
+d0831:	db	7
+d0832:	dw	t0b26
+t0834:	call	a0389
+	lda	d0831
+	mov	b,a
+	ani	0f0h
+	jnz	a084d
+	lhld	d0832
+	inr	l
+	shld	d0832
+	mov	b,m
+	mov	a,b
+	ora	a
+	cz	a0858
+a084d:	mov	a,b
+	sui	010h
+	sta	d0831
+	ani	00fh
+	jmp	a03a7
+;
+a0858:	lxi	h,t0b25
+	shld	d0832
+	mov	b,m
+	mov	a,b
+	sta	d0831
+	ret
+;
+t0864:	call	a0389
+	call	a06cc
+	cpi	0ffh
+	rz
+	cpi	020h
+	rnz
+	inx	sp
+	inx	sp
+	inx	sp
+	inx	sp
+	ret
+;
+exit:	mvi	c,01bh
+	call	a0371
+	mvi	c,'L'
+	call	a0371
+	jmp	a06cf
+;
+t0887:	lxi	h,0515h
+	call	a039b
+	lxi	h,t0950
+	call	a037a
+	lhld	d034d
+	call	a0374
+	lxi	h,t0956
+	call	a037a
+	ret
+;
+;
+a0944:	call	main
+	call	a07c2
+	jmp	a06c0
+;
+main:	call	mode40
+	mvi	a,2eh
+	sta	d0688
+	mvi	a,10
+	sta	d034a
+	lxi	h,scrmsg
+	shld	jarg
+main1:	lxi	h,mainmen
+	push	h
+	call	pmood
+main2:	call	ttstat
+	jz	scroll
+	cpi	'1'
+	rz
+	lxi	b,main
+	push	b
+	cpi	'2'
+	jz	a0813
+	pop	b
+	lxi	b,main1
+	push	b
+	cpi	'3'
+	jz	redefk
+	cpi	'4'
+	jz	exit
+	pop	b
+	jmp	main2
+;
+scroll:	lda	korda
+	dcr	a
+	sta	korda
+	jnz	main2
+	mvi	a,180
+	sta	korda
+	lxi	h,2037h
+	shld	cursor+2
+	lxi	b,cursor
+	call	ttcon
+	lhld	jarg
+	inx	h
+	shld	jarg
+	mvi	c,39
+scroll0:mov	a,m
+	ora	a
+	jz	scroll1
+	call	tto
+	inx	h
+	dcr	c
+	jnz	scroll0
+	jmp	main2
+;
+scroll1:lxi	h,scrmsg
+	shld	jarg
+	jmp	main2
+;
+korda:	db	180
+jarg:	dw	scrmsg
+;
+scrmsg:	db	'                                        '
+	db	'--- Some words about Vakstu Laboratories:'
+	db	' The "staff" of Vakstu Laboratories are '
+	db	' Vahur Sinij|rv with his old friend "JUKU PC".'
+	db	' The most famous works are: MCED - an exclusive '
+	db	' 3 - voices Music Editor with powerful editing and '
+	db	' creating options - AVTEST - a test which enables to test Your'
+	db	' "calculating abilities". Have a good time with ZOO ---'
+	db	'                                        ',0
+clrwnd:	mvi	e,7
+	lxi	h,2a28h
+	shld	cursor+2
+	lxi	h,cursor+2
+clrwnd1:lxi	b,cursor
+	call	ttcon
+	lxi	b,clrln1
+	call	ttcon
+	inr	m
+	dcr	e
+	jnz	clrwnd1
+	ret
+;
+clrln1:	'                     ',0
+cursor:	1bh,59h,0,0,0
+;
+redefk:	lxi	b,clrln
+	call	ttcon
+	call	clrwnd
+	call	naita
+	cz	salvesta
+	lxi	b,invoff
+	jmp	ttcon
+;
+naita:	lxi	b,skeys
+	call	ttcon
+	call	tti
+	call	clrwnd
+	lxi	b,header1
+	call	ttcon
+	lxi	h,2a29h
+	shld	cursor+2
+	mvi	e,6
+	lxi	b,naitakir
+	lxi	h,t06d2+1
+naita0:	push	b
+	lxi	b,cursor
+	call	ttcon
+	pop	b
+	mvi	d,15
+naita1:	ldax	b
+	call	tto
+	inx	b
+	dcr	d
+	jnz	naita1
+	mov	a,m
+	inx	h
+	cpi	' '
+	cnc	tto
+	lda	cursor+2
+	inr	a
+	sta	cursor+2
+	dcr	e
+	jnz	naita0
+	call	a06c6
+	cpi	'Y'
+	ret
+;
+Salvesta:lxi	h,2928h
+	shld	cursor+2
+	lxi	b,cursor
+	call	ttcon
+	lxi	b,header2
+	call	ttcon
+	lxi	h,3929h
+	shld	cursor+2
+	lxi	b,curson
+	call	ttcon
+	mvi	e,6
+	lxi	h,t06d2+1
+salve1:	lxi	b,cursor
+	call	ttcon
+	call	a06c6
+	call	noise
+	mov	m,a
+	inx	h
+	cpi	' '
+	cnc	tto
+	lda	cursor+2
+	inr	a
+	sta	cursor+2
+	dcr	e
+	jnz	salve1
+	lxi	b,cursoff
+	call	ttcon
+	ret
+;
+header1:db	1bh,59h,28h,29h,'Redefine (y/n) ?      ',0
+header2:db	'Enter keys you like:  ',0
+skeys:	db	1bh,59h,28h,2ah,'   Keys for ...      '
+	db	1bh,59h,29h,2ah,'Aborting the game: ',1bh,28h,'Q',1bh,27h
+	db	1bh,59h,2ah,2ah,'Wasting a life:    ',1bh,28h,'R',1bh,27h
+	db	1bh,59h,2bh,2ah,'Bumping the speed: ',1bh,28h,'-',1bh,27h
+	db	1bh,59h,2ch,2ah,'Reducing the speed:',1bh,28h,'+',1bh,27h
+	db	1bh,59h,2eh,2ah,'   Press any key   ',0
+naitakir:db	'   Left:       '
+	 db	'   Right:      '
+	 db	'   Up:         '
+	 db     '   Down:       '
+         db     '   Digging L.: '
+	 db	'   Digging R.: '
+;
+clrln:	db	1bh,59h,25h,2dh,1bh,28h,'             ',1bh,27h,0
+invoff:	db	1bh,28h,0
+curson:	db	1bh,'5',0
+cursoff:db	1bh,'4',0
+;
+	db	000h
+	db	000h
+	db	000h
+t0950:	db	' Score:',0
+t0956:	db	'   Space bar returns you to main menu.',0
+t0b25:	db	013h
+t0b26:	db	0a2h,15h,12h,50h,12h,15h,92h,0d3h,41h,15h
+	db	71h,16h,32h,64h,15h,12h,12h,42h,63h,31h,73h,21h,15h,0f0h,30h,31h
+	db	13h,0f2h,52h,20h,15h,12h,0d3h,91h,15h,51h,83h,10h,0
+	include	ZOO.PLT
+	end
+

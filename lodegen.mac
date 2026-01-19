@@ -1,0 +1,570 @@
+	aseg
+	org	0100h
+	include	ROMBIOS.LIB
+tabstrt	equ	2200h
+demtab	equ	tabstrt+800h
+gamentr	equ	0c23h
+y8f5f	equ	08f5fh
+;
+	lxi	b,alg
+	lxi	h,lopp
+	lxi	d,8000h
+	call	move
+	jmp	start
+alg:
+	.phase	8000h
+;
+; Ekraani puhastamine
+xc010:	push	psw
+	mvi	a,1bh
+	call	tto
+	mvi	a,'L'
+	call	tto
+	pop	psw
+	ret
+;
+; Heliv|ljastus
+xc1a0:	ret
+xc1ab:	ret
+;
+; Registripaaride H&L ja D&E v}rdlemine
+xc427:	mov	a,h
+	cmp	d
+	rnz
+	mov	a,l
+	cmp	e
+	ret
+;
+; S~mboli sisestamine klaviatuurilt
+xc803:	jmp	tti
+;
+; S~mboli v|ljastamine ekraanile
+xc809:	push	psw
+	mov	a,c
+	call	tto
+	pop	psw
+	ret
+;
+; Teate saatmine ekraanile
+xc818:	push	b
+	mov	c,l
+	mov	b,h
+	call	ttcon
+	pop	b
+	ret
+;
+; Hex-arvu kuvamine ekraanil
+xcc6c:	push	b
+	mov	c,l
+	mov	b,h
+	call	outh2
+	pop	b
+	ret
+;
+start:	lxi	sp,03fffh
+	lxi	h,00000h
+	shld	d8692
+	lxi	h,demtab+180h
+	shld	d8690
+	mvi	a,1bh
+	call	tto
+	mvi	a,'M'
+	call	tto
+	mvi	a,'2'
+	call	tto
+	call	xc010
+	call	a8308
+a801d:	lhld	d8690
+a8020:	call	a825d
+	call	a8275
+	lxi	d,demtab
+a8029:	mvi	c,080h
+	call	a828a
+a802e:	call	a82f5
+	lxi	h,t833b
+	call	a82c6
+	call	xc803
+	cpi	040h
+	jc	a8043
+	mov	c,a
+	call	xc809
+a8043:	cpi	070h
+	jz	a8126
+	cpi	073h
+	jz	a809b
+	cpi	07ah
+	jz	a8095
+	cpi	077h
+	jz	a80e8
+	cpi	07ch
+	jz	a80ba
+	cpi	062h
+	jz	a8194
+	cpi	06dh
+	jz	a815c
+	cpi	064h
+	jz	a80a1
+	cpi	008h
+	jz	a814a
+	cpi	0ch
+	jz	a813a
+	cpi	0bh
+	jz	a8150
+	cpi	0ah
+	jz	a8156
+	cpi	030h
+	jc	a8089
+	cpi	037h
+	jc	a8173
+	cpi	'g'
+	jz	game
+a8089:	call	xc1a0
+	call	xc1ab
+	call	xc1a0
+	jmp	a802e
+;
+game:	lhld	d8690
+	call	gamentr
+	jmp	a802e
+;
+a8095:	call	a82e3
+	jmp	a802e
+;
+a809b:	call	a82e3
+	jmp	a801d
+;
+a80a1:	call	a82b3
+	cz	a81a9
+	lxi	h,00000h
+	shld	d8692
+	lxi	b,000c0h
+	lhld	d8690
+	dad	b
+	shld	d8690
+	jmp	a801d
+;
+a80ba:	call	a82b3
+	cz	a81a9
+	lxi	h,00000h
+	shld	d8692
+	lxi	h,t83d4
+	call	a82c6
+	call	a81c9
+	call	a821f
+	mov	a,l
+	lxi	b,000c0h
+	lxi	h,demtab+180h
+	ora	a
+	jz	a80e2
+a80dd:	dad	b
+	dcr	a
+	jnz	a80dd
+a80e2:	shld	d8690
+	jmp	a801d
+;
+a80e8:	lxi	h,t8389
+	call	a82c6
+	call	a81c9
+	call	a821f
+	mov	a,l
+	ora	a
+	jnz	a811c
+	lda	d8692
+	ora	a
+	jz	a8106
+	lxi	h,t8694
+	jmp	a8020
+;
+a8106:	mvi	b,014h
+a8108:	lxi	h,t836f
+	call	a82c6
+	dcr	b
+	jnz	a8108
+	jmp	a802e
+;
+a811c:	lda	d8693
+	ora	a
+	jz	a8106
+	jmp	a8134
+;
+a8126:	lxi	h,08754h
+	call	a829e
+	mvi	a,0ffh
+	sta	d8693
+	call	a8308
+a8134:	lxi	h,08754h
+	jmp	a8020
+;
+a813a:	lxi	h,00010h
+a813d:	dad	d
+	call	a81b0
+	push	h
+	call	a8288
+	pop	h
+	xchg
+	jmp	a8029
+;
+a814a:	lxi	h,0fff0h
+	jmp	a813d
+;
+a8150:	lxi	h,0ffffh
+	jmp	a813d
+;
+a8156:	lxi	h,00001h
+	jmp	a813d
+;
+a815c:	call	a82b3
+	cz	a81a9
+	jmp	0
+;
+a8173:	sui	030h
+	rlc
+	rlc
+	rlc
+	rlc
+	stax	d
+	mov	c,a
+	call	a828a
+	lxi	h,00010h
+	dad	d
+	xchg
+	lxi	h,demtab+17fh
+	call	xc427
+	jnc	a8029
+	lxi	h,0fe81h
+	dad	d
+	xchg
+	jmp	a8029
+;
+a8194:	lxi	h,t83bb
+	call	a82c6
+	call	a82b9
+	jnz	a802e
+	lxi	h,0ffffh
+	shld	d8692
+	jmp	a802e
+;
+a81a9:	lhld	d8690
+	call	a829e
+	ret
+;
+a81b0:	push	d
+	lxi	d,demtab
+	call	xc427
+	jc	a81c5
+	lxi	d,demtab+180h
+	call	xc427
+	jnc	a81c5
+	pop	d
+	ret
+;
+a81c5:	pop	h
+	push	h
+	pop	d
+	ret
+;
+a81c9:	push	h
+	push	d
+	push	b
+	lxi	h,08f50h
+	lxi	d,08f53h
+	mov	b,h
+	mov	c,l
+a81d4:	call	xc803
+	cpi	008h
+	jz	a8202
+	cpi	00dh
+	jz	a821a
+	cpi	030h
+	jc	a81d4
+	cpi	03ah
+	jnc	a81d4
+	sta	y8f5f
+	call	xc427
+	jz	a81d4
+	lda	y8f5f
+	mov	m,a
+	push	b
+	mov	c,a
+	call	xc809
+	pop	b
+	inx	h
+	jmp	a81d4
+;
+a8202:	mov	a,h
+	cmp	b
+	jnz	a820c
+	mov	a,l
+	cmp	c
+	jz	a81d4
+a820c:	dcx	h
+	push	b
+	push	h
+	lxi	h,t868c
+	call	xc818
+	pop	h
+	pop	b
+	jmp	a81d4
+;
+a821a:	mov	m,a
+	pop	b
+	pop	d
+	pop	h
+	ret
+;
+a821f:	push	d
+	push	b
+	lxi	b,08f50h
+	lxi	h,00000h
+a8227:	ldax	b
+	cpi	00dh
+	jz	a823f
+	sui	030h
+	dad	h
+	push	h
+	dad	h
+	dad	h
+	pop	d
+	dad	d
+	add	l
+	mov	l,a
+	mvi	a,000h
+	adc	h
+	mov	h,a
+	inx	b
+	jmp	a8227
+;
+a823f:	pop	d
+	pop	b
+	ret
+;
+add48:	push	d
+	lxi	d,48
+	dad	d
+	pop	d
+	ret
+;
+a8242:	push	h
+	push	b
+a8244:	ldax	b
+	mov	m,a
+	inx	h
+	inr	b
+	ldax	b
+	mov	m,a
+	call	add48
+	inx	b
+	ldax	b
+	mov	m,a
+	dcx	h
+	dcr	b
+	ldax	b
+	mov	m,a
+	call	add48
+	inx	b
+	mov	a,c
+	ani	00fh
+	cpi	0ch
+	jnz	a8244
+	pop	b
+	pop	h
+	ret
+;
+a825d:	lxi	d,demtab
+	mvi	b,0c0h
+a8262:	mov	a,m
+	add	a
+	add	a
+	add	a
+	add	a
+	stax	d
+	inx	d
+	mov	a,m
+	ani	0f0h
+	stax	d
+	inx	d
+	inx	h
+	dcr	b
+	jnz	a8262
+	mov	a,c
+	ret
+;
+a8275:	lxi	d,demtab
+	lxi	b,00180h
+a827b:	push	b
+	call	a8288
+	pop	b
+	inx	d
+	dcx	b
+	mov	a,b
+	ora	c
+	jnz	a827b
+	ret
+;
+a8288:	ldax	d
+	mov	c,a
+a828a:	mvi	b,high tabstrt
+	call	a8292
+	jmp	a8242
+;
+a8292:	push	d
+	mov	a,d
+	sui	high demtab
+	mov	h,a
+	mov	a,e
+	ani	0f0h
+	ora	h
+	rrc
+	rrc
+	rrc
+	rrc
+	add	a
+	mov	l,a
+	mvi	h,0
+	push	h
+	mov	a,e
+	ani	0fh
+	mov	l,a
+	mvi	h,0
+	push	h
+	pop	d
+	dad	h	;x2
+	dad	d	;x3
+	dad	h	;x6
+	dad	h	;x12
+	dad	h	;12x2
+	dad	h	;12x4
+	dad	h	;12x8
+	push	h
+	pop	d
+	dad	h	;12x16
+	dad	d	;12x24
+	dad	h	;12x48
+	lxi	d,0d800h
+	dad	d
+	xchg
+	pop	h
+	dad	d
+	pop	d
+	ret
+;
+a829e:	xchg
+	lxi	h,demtab
+	mvi	b,0c0h
+a82a4:	mov	a,m
+	rrc
+	rrc
+	rrc
+	rrc
+	inx	h
+	ora	m
+	stax	d
+	inx	h
+	inx	d
+	dcr	b
+	jnz	a82a4
+	ret
+;
+a82b3:	lxi	h,t83a2
+	call	a82c6
+a82b9:	call	xc803
+	mov	c,a
+	call	xc809
+	cpi	064h
+	ret
+;
+a82c3:	lxi	h,t835b
+a82c6:	mov	a,m
+	cpi	01bh
+	cz	a82d6
+	mov	c,a
+	inx	h
+	ora	a
+	rz
+	call	xc809
+	jmp	a82c6
+;
+a82d6:	call	tto
+	mvi	a,'Y'
+	call	tto
+	inx	h
+	mov	a,m
+	adi	20h
+	call	tto
+	inx	h
+	mov	a,m
+	adi	20h
+	call	tto
+	inx	h
+	mov	a,m
+	ret
+;
+a82e3:	lxi	h,t8694
+	call	a829e
+	mvi	a,0ffh
+	sta	d8692
+	call	a82c3
+	call	xc803
+	ret
+;
+a82f5:	push	d
+	lxi	h,t83f1
+	call	a82c6
+	lhld	d8690
+	lxi	d,000bfh
+	dad	d
+	call	xcc6c
+	pop	d
+	ret
+;
+a8308:	push	h
+	push	d
+	push	b
+	call	xc010
+	lxi	d,01422h
+	lxi	b,00600h
+a8314:	push	b
+	call	a828a
+	pop	b
+	lxi	h,00020h
+	dad	d
+	xchg
+	mvi	a,010h
+	add	c
+	mov	c,a
+	dcr	b
+	jnz	a8314
+	lxi	d,demtab+112h
+	mvi	c,080h
+	call	a828a
+	lxi	h,t83fc
+	call	a82c6
+	call	xc803
+	pop	b
+	pop	d
+	pop	h
+	ret
+;
+t833b:	db	1bh,21,0,'Command:                 '
+	db	1bh,21,8,0
+t835b:	db	1bh,21,0,'Ready ! (Ret)',0
+t836f:	db	1bh,21,0,'Buffer empty !           ',0
+t8389:	db	1bh,21,0,'Buffer number (0,1) ? ',0
+t83a2:	db	1bh,21,0,'Save this stage (y/n)?',0
+t83bb:	db	1bh,21,0,'Restore (y/n) ?',0
+t83d4:	db	1bh,21,0,'Stage number ?           '
+	db	1bh,21,15,0
+t83f1:	db	1bh,21,40,'Address:',0
+t83fc:	db	1bh,1,15,'Stage elements:',0
+t868c:	db	8,' ',8,8,0
+d8690:	dw	demtab+180h
+d8692:	nop
+d8693:	nop
+t8694:	nop
+	nop
+	nop
+	nop
+	.dephase
+lopp:
+	end
+
