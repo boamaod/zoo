@@ -1328,7 +1328,11 @@ a0729:	call	a000f
 	lda	d0349
 	call	a037d
 	lhld	d0350
-	shld	d0352ğpòƒ‰ò	ÇÄ@ğpò‰ò	ÇÄ@	ğpòƒ‰ò	ÇÄ@Àğpò‰	d0368
+	shld	d0352
+	lhld	d035b
+	shld	d035d
+	lhld	d0366
+	shld	d0368
 	ret
 ;
 a0745:	db	0cdh
