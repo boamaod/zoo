@@ -13,11 +13,24 @@ Pikemalt mängust ja selle sünniloost JUKU mängude ketta 2025 saatesõnas:
 
 Originaali autorid С.Переверзев ja Е.Филиппов, leveliredaktori autor В.Зверков.
 
-Ehitamiseks:
+Mängu ehitamiseks:
 
 ```
 M80 =LODERUN
 L80 LODERUN,LODERUN/N/E
+```
+
+Levelirdaktori puhul:
+
+```
+M80 =LODEGEN
+L80 LODEGEN,LODEGEN/N/E
+```
+
+Levis olnud 58 leveliga ZOO puhul algavad levelid teisest mäluaadressist ja kui tahta, mängu käivitamise ja sellest väljumise järel mällu jäänud leveleid brausida, siis tuleks muuta algusaadress [neljandal real](https://github.com/boamaod/zoo/blob/main/lodegen.mac#L4):
+
+```
+tabstrt	equ	2200h+0a00h
 ```
 
 Have a good time with ZOO!
