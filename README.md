@@ -11,7 +11,7 @@ Pikemalt mängust ja selle sünniloost JUKU mängude ketta 2025 saatesõnas:
 
 * https://gafgaf.infoaed.ee/posts/mängude-ketas-2025/
 
-Originaali autorid С.Переверзев ja Е.Филиппов, leveliredaktori autor В.Зверков.
+Originaali autorid on Е.Филиппов ja С.Переверзев, leveliredaktori autor В.Зверков.
 
 Mängu ehitamiseks:
 
