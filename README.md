@@ -2,7 +2,7 @@
 
 VAKSTU versioon mängust ZOO koos leveliredaktoriga.
 
-Ajakirja Modelist-Konstruktor 1990. aasta mai ja juunikuu numbrist masinkoodis sisse toksinud ja kooliarvuti JUKU E5104 peale portinud:
+Ajakirja Modelist-Konstruktor 1990. aasta mai- ja juunikuu numbrist masinkoodis sisse toksinud ja kooliarvuti JUKU E5104 peale portinud:
 
 * Vahur Sinijärv (programmeerimine ja graafika)
 * Kalle Tomingas (muud tööd, sh suur osa levelitest)
